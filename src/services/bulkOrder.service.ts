@@ -11,15 +11,15 @@ export class BulkOrderService {
 
       let customerId = await CustomerService.findOrCreateCustomer(connection, {
         name: orderData.customerName,
-        phone: orderData.phone,
-        email: orderData.email
+        phone: orderData.customerPhone,
+        email: orderData.customerEmail
       });
 
       const orderNumber = `ORD-${Date.now()}`;
       const remainingAmount = orderData.totalAmount - (orderData.advancePaid || 0);
 
       const [orderResult] = await connection.query<ResultSetHeader>(BULK_ORDER_QUERIES.CREATE_ORDER, [
-        orderNumber, customerId, orderData.customerName, orderData.phone, orderData.email || null,
+        orderNumber, customerId, 
         orderData.deliveryDate, orderData.deliveryTime, orderData.totalAmount, orderData.advancePaid || 0,
         remainingAmount, 'Upcoming', orderData.occasion || null, orderData.specialInstructions || null,
         orderData.createdBy || null
@@ -29,7 +29,7 @@ export class BulkOrderService {
 
       for (const item of orderData.products) {
         await connection.query(BULK_ORDER_QUERIES.CREATE_ORDER_ITEM, [
-          orderId, item.productId, item.productName, item.quantity, item.unit, item.rate, item.amount
+          orderId, item.productId, item.productName, item.quantity, item.unit, item.price, item.total
         ]);
       }
 
