@@ -22,7 +22,7 @@ export class BulkOrderService {
         orderNumber, customerId, 
         orderData.deliveryDate, orderData.deliveryTime, orderData.totalAmount, orderData.advancePaid || 0,
         remainingAmount, 'Upcoming', orderData.occasion || null, orderData.specialInstructions || null,
-        orderData.createdBy || null
+        orderData.createdBy || null,orderData.deliveryAddress
       ]);
 
       const orderId = orderResult.insertId;

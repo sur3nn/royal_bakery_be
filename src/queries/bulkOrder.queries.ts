@@ -1,7 +1,7 @@
 export const BULK_ORDER_QUERIES = {
   CREATE_ORDER: `
-    INSERT INTO bulk_orders (order_number, customer_id,delivery_date, delivery_time, total_amount, advance_paid, remaining_amount, status, occasion, special_instructions, created_by)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO bulk_orders (order_number, customer_id,delivery_date, delivery_time, total_amount, advance_paid, remaining_amount, status, occasion, special_instructions, created_by,delivery_address)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
   `,
   CREATE_ORDER_ITEM: `
     INSERT INTO bulk_order_items (bulk_order_id, product_id, product_name_snapshot, quantity, unit, rate, amount)
