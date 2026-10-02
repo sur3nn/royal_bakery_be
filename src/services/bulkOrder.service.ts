@@ -48,8 +48,21 @@ export class BulkOrderService {
     return rows;
   }
 
-  static async updateStatus(id: number, status: string) {
-    const [result] = await pool.query<ResultSetHeader>(BULK_ORDER_QUERIES.UPDATE_STATUS, [status, id]);
-    return result.affectedRows > 0;
+  static async updateStatus(id: number, statusId: number) {
+  const [result] = await pool.query<ResultSetHeader>(
+    BULK_ORDER_QUERIES.UPDATE_STATUS,
+    [statusId, id]
+  );
+
+  return result.affectedRows > 0;
+}
+
+
+   static async getDeliveryStatus() {
+    const [rows] = await pool.query<RowDataPacket[]>(
+      BULK_ORDER_QUERIES.GET_ALL_DELIVERY_STATUS
+    );
+
+    return rows;
   }
 }
