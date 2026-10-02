@@ -19,3 +19,5 @@ export function mapApiProductToProduct(raw: any): any {
     isHighDemand: !!raw.is_popular,
   };
 }
+
+// utils/mappers.ts — add alongside mapApiProductToProduct

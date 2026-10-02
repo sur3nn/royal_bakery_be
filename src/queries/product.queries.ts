@@ -32,7 +32,7 @@ UPDATE: `
     WHERE id = ? AND current_stock >= ?
   `,
   INSERT_INVENTORY_LOG: `
-    INSERT INTO inventory_transactions (product_id, type, quantity, unit, reference_type, reference_id, performed_by, notes)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+INSERT INTO inventory_transactions (product_id, type, quantity, unit, reference_type, reference_id, performed_by, notes)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `
 };

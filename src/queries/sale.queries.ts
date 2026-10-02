@@ -12,5 +12,9 @@ export const SALE_QUERIES = {
     FROM sales s
     LEFT JOIN customers c ON s.customer_id = c.id
     ORDER BY s.created_at DESC
-  `
+  `,
+  GET_SALE_ITEMS: `
+  SELECT * FROM sale_items WHERE sale_id = ?
+`,
+
 };
