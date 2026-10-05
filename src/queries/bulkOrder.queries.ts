@@ -55,26 +55,8 @@ export const BULK_ORDER_QUERIES = {
   GROUP BY bo.id
 
   ORDER BY bo.delivery_date ASC, bo.delivery_time ASC`,
-
-  // new: one order for the KOT PDFs
-  GET_BY_ID: `
-    SELECT bo.*, c.name AS customer_name, c.phone AS customer_phone
-      FROM bulk_orders bo
-      LEFT JOIN customers c ON bo.customer_id = c.id
-     WHERE bo.id = ?
-  `,
-
-  // new: items of one order for the KOT PDFs
-  GET_ITEMS_BY_ORDER_IDS: `
-    SELECT bulk_order_id,
-           product_name_snapshot AS productName,
-           quantity, unit,
-           pack_size  AS packSize,
-           pack_count AS packCount
-      FROM bulk_order_items
-     WHERE bulk_order_id IN (?)
-     ORDER BY id
-  `,
-
   UPDATE_STATUS: `UPDATE bulk_orders SET status = ? WHERE id = ?`
+    GET_ALL_DELIVERY_STATUS: `
+    SELECT id, name
+    FROM delivery_status`
 };
