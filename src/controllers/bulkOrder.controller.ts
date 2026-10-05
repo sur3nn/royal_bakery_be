@@ -64,21 +64,49 @@ export class BulkOrderController {
   }
 
   // GET /bulk-orders/:id/kot/kitchen  or  /bulk-orders/:id/kot/packing
-  static async downloadKot(req: Request, res: Response) {
-    try {
-      const { type } = req.params;
-      if (type !== 'kitchen' && type !== 'packing') {
-        return res.status(400).json({ success: false, message: 'type must be kitchen or packing' });
-      }
+ static async downloadKot(req: Request, res: Response) {
+  try {
+    const { type } = req.params;
 
-      const order : any= await BulkOrderService.getOneWithItems(Number(req.params.id));
-      if (!order) return res.status(404).json({ success: false, message: 'Order not found' });
-
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', `attachment; filename="${type}-kot-${order.order_number}.pdf"`);
-      KotPdfService.build(order, type).pipe(res);
-    } catch (err: any) {
-      res.status(500).json({ success: false, message: err.message });
+    if (type !== 'kitchen' && type !== 'packing') {
+      return res.status(400).json({
+        success: false,
+        message: 'type must be kitchen or packing'
+      });
     }
+
+    const order: any =
+      await BulkOrderService.getOneWithItems(Number(req.params.id));
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: 'Order not found'
+      });
+    }
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="${type}-kot-${order.order_number}.pdf"`
+    );
+
+    const pdf = KotPdfService.build(order, type);
+
+    pdf.pipe(res);
+    pdf.end();
+
+  } catch (err: any) {
+    console.error('KOT PDF ERROR:', err);
+
+    if (!res.headersSent) {
+      return res.status(500).json({
+        success: false,
+        message: err.message
+      });
+    }
+
+    res.end();
   }
+}
 }

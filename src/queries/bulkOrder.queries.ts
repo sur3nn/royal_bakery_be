@@ -1,8 +1,24 @@
 export const BULK_ORDER_QUERIES = {
-  CREATE_ORDER: `
-    INSERT INTO bulk_orders (order_number, customer_id,delivery_date, delivery_time, total_amount, advance_paid, remaining_amount, status, occasion, special_instructions, created_by,delivery_address)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
-  `,
+CREATE_ORDER: `
+  INSERT INTO bulk_orders (
+    order_number,
+    customer_id,
+    customer_name_snapshot,
+    phone_snapshot,
+    email_snapshot,
+    delivery_date,
+    delivery_time,
+    total_amount,
+    advance_paid,
+    remaining_amount,
+    status,
+    occasion,
+    special_instructions,
+    created_by,
+    delivery_address
+  )
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+`,
 
   // changed: now saves pack_size and pack_count
   CREATE_ORDER_ITEM: `
@@ -56,7 +72,26 @@ export const BULK_ORDER_QUERIES = {
 
   ORDER BY bo.delivery_date ASC, bo.delivery_time ASC`,
   UPDATE_STATUS: `UPDATE bulk_orders SET status = ? WHERE id = ?`,
-    GET_ALL_DELIVERY_STATUS: `
+  
+  GET_ALL_DELIVERY_STATUS: `
     SELECT id, name
-    FROM delivery_status`
+    FROM delivery_status`,
+     GET_BY_ID: `
+    SELECT bo.*, c.name AS customer_name, c.phone AS customer_phone
+      FROM bulk_orders bo
+      LEFT JOIN customers c ON bo.customer_id = c.id
+     WHERE bo.id = ?
+  `,
+
+  // new: items of one order for the KOT PDFs
+  GET_ITEMS_BY_ORDER_IDS: `
+    SELECT bulk_order_id,
+           product_name_snapshot AS productName,
+           quantity, unit,
+           pack_size  AS packSize,
+           pack_count AS packCount
+      FROM bulk_order_items
+     WHERE bulk_order_id IN (?)
+     ORDER BY id
+  `,
 };
