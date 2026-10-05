@@ -55,7 +55,7 @@ export const BULK_ORDER_QUERIES = {
   GROUP BY bo.id
 
   ORDER BY bo.delivery_date ASC, bo.delivery_time ASC`,
-  UPDATE_STATUS: `UPDATE bulk_orders SET status = ? WHERE id = ?`
+  UPDATE_STATUS: `UPDATE bulk_orders SET status = ? WHERE id = ?`,
     GET_ALL_DELIVERY_STATUS: `
     SELECT id, name
     FROM delivery_status`
