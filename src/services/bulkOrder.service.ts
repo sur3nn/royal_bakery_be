@@ -175,5 +175,20 @@ static async createBulkOrder(orderData: any) {
 
     return rows;
   }
+    static async getKitchenSummary(from: string, to: string) {
+    const [rows] = await pool.query<RowDataPacket[]>(BULK_ORDER_QUERIES.KITCHEN_SUMMARY, [from, to]);
+    const [cnt] = await pool.query<RowDataPacket[]>(BULK_ORDER_QUERIES.KITCHEN_ORDER_COUNT, [from, to]);
+
+    return {
+      rows: rows.map((r) => ({
+        productId: r.productId,
+        productName: r.productName,
+        unit: r.unit,
+        totalQuantity: Number(r.totalQuantity),
+        orderCount: Number(r.orderCount),
+      })),
+      orderCount: Number(cnt[0]?.total ?? 0),
+    };
+  }
   
 }

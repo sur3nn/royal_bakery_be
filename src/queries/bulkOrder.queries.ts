@@ -94,4 +94,27 @@ CREATE_ORDER: `
      WHERE bulk_order_id IN (?)
      ORDER BY id
   `,
+    // Total quantity of every product across all orders in the date range
+  KITCHEN_SUMMARY: `
+    SELECT boi.product_id                       AS productId,
+           MAX(boi.product_name_snapshot)       AS productName,
+           boi.unit                             AS unit,
+           SUM(boi.quantity)                    AS totalQuantity,
+           COUNT(DISTINCT boi.bulk_order_id)    AS orderCount
+      FROM bulk_order_items boi
+      JOIN bulk_orders bo         ON bo.id = boi.bulk_order_id
+      LEFT JOIN delivery_status ds ON ds.id = bo.status
+     WHERE DATE(bo.delivery_date) BETWEEN ? AND ?
+       AND (ds.name IS NULL OR LOWER(ds.name) <> 'cancelled')
+     GROUP BY boi.product_id, boi.unit
+     ORDER BY productName
+  `,
+
+  KITCHEN_ORDER_COUNT: `
+    SELECT COUNT(*) AS total
+      FROM bulk_orders bo
+      LEFT JOIN delivery_status ds ON ds.id = bo.status
+     WHERE DATE(bo.delivery_date) BETWEEN ? AND ?
+       AND (ds.name IS NULL OR LOWER(ds.name) <> 'cancelled')
+  `,
 };

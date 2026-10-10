@@ -7,5 +7,6 @@ router.get('/', BulkOrderController.getAll);
 router.patch('/:id/status', BulkOrderController.updateStatus);
 router.get('/status', BulkOrderController.getAllDeliveryStatus);
 router.get('/:id/kot/:type', BulkOrderController.downloadKot);
+router.get('/kot/kitchen-summary', BulkOrderController.downloadKitchenSummary);
 
 export default router;
