@@ -117,4 +117,5 @@ CREATE_ORDER: `
      WHERE DATE(bo.delivery_date) BETWEEN ? AND ?
        AND (ds.name IS NULL OR LOWER(ds.name) <> 'cancelled')
   `,
+  
 };
