@@ -81,7 +81,7 @@ export const DASHBOARD_QUERIES = {
       JOIN sales s          ON s.id = si.sale_id
                            AND s.status = 'Completed'
                            AND s.sale_date >= CURDATE() - INTERVAL 29 DAY
-      JOIN products p       ON p.id = si.product_id and p.status = "active"
+      JOIN products p       ON p.id = si.product_id 
       LEFT JOIN product_categories pc ON pc.id = p.category_id
      GROUP BY p.id, p.name, pc.name, p.unit, p.selling_price, p.current_stock, p.image_url, p.is_popular
      ORDER BY soldQty DESC
