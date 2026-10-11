@@ -89,7 +89,9 @@ CREATE_ORDER: `
            product_name_snapshot AS productName,
            quantity, unit,
            pack_size  AS packSize,
-           pack_count AS packCount
+           pack_count AS packCount,
+           rate,
+           amount
       FROM bulk_order_items
      WHERE bulk_order_id IN (?)
      ORDER BY id
