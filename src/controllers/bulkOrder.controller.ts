@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { BulkOrderService } from '../services/bulkOrder.service';
 import { KotPdfService } from '../services/kotpdf.service';
 import { KitchenSummaryPdfService } from '../services/Kitchensummarypdf.service';
+  import { BillPdfService } from '../services/billpdf.service';
 
 export class BulkOrderController {
   static async create(req: Request, res: Response) {
@@ -138,6 +139,59 @@ export class BulkOrderController {
       if (!res.headersSent) {
         return res.status(500).json({ success: false, message: err.message });
       }
+      res.end();
+    }
+  }
+
+
+
+
+  // GET /bulk-orders/:id/bill
+  static async downloadBill(req: Request, res: Response) {
+    try {
+      const fmtDate = (d: any) => (d instanceof Date ? d.toLocaleDateString('en-IN') : String(d ?? '').slice(0, 10));
+      const o: any = await BulkOrderService.getBillData(Number(req.params.id));
+      if (!o) return res.status(404).json({ success: false, message: 'Order not found' });
+
+      const customer: [string, string][] = [
+        ['Customer', o.customer_name || o.customer_name_snapshot || '-'],
+        ['Phone', o.customer_phone || o.phone_snapshot || '-'],
+      ];
+      if (o.delivery_address) customer.push(['Address', o.delivery_address]);
+
+      const meta: [string, string][] = [
+        ['Order No', o.order_number],
+        ['Delivery', `${fmtDate(o.delivery_date)} ${String(o.delivery_time ?? '').slice(0, 5)}`],
+      ];
+      if (o.occasion) meta.push(['Occasion', o.occasion]);
+
+      const pdf = BillPdfService.build({
+        shopName: 'Kanagaraj Catering And Sweets',
+        title: 'BULK ORDER BILL',
+        meta,
+        customer,
+        lines: o.products.map((i: any) => ({
+          name: i.productName,
+          qty: `${Number(i.quantity)} ${i.unit}`,
+          rate: Number(i.rate),
+          amount: Number(i.amount),
+        })),
+        totals: [],
+        grandTotalLabel: 'Total',
+        grandTotal: Number(o.total_amount),
+        footer: [
+          ['Advance Paid', Number(o.advance_paid)],
+          ['Balance', Number(o.remaining_amount)],
+        ],
+      });
+
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="bill-${o.order_number}.pdf"`);
+      pdf.pipe(res);
+      pdf.end();
+    } catch (err: any) {
+      console.error('BULK BILL PDF ERROR:', err);
+      if (!res.headersSent) return res.status(500).json({ success: false, message: err.message });
       res.end();
     }
   }

@@ -16,5 +16,10 @@ export const SALE_QUERIES = {
   GET_SALE_ITEMS: `
   SELECT * FROM sale_items WHERE sale_id = ?
 `,
-
+  GET_SALE_BY_ID: `
+    SELECT s.*, c.name AS customer_name, c.phone AS customer_phone
+      FROM sales s
+      LEFT JOIN customers c ON s.customer_id = c.id
+     WHERE s.id = ?
+  `,
 };

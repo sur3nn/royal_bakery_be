@@ -117,5 +117,12 @@ CREATE_ORDER: `
      WHERE DATE(bo.delivery_date) BETWEEN ? AND ?
        AND (ds.name IS NULL OR LOWER(ds.name) <> 'cancelled')
   `,
-  
+    GET_BILL_ITEMS: `
+    SELECT product_name_snapshot AS productName, quantity, unit,
+           pack_size AS packSize, pack_count AS packCount,
+           rate, amount
+      FROM bulk_order_items
+     WHERE bulk_order_id = ?
+     ORDER BY id
+  `,
 };

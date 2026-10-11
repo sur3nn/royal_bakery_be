@@ -161,4 +161,10 @@ static async getAll() {
 
   return sales;
 }
+static async getOneWithItems(id: number) {
+  const [rows] = await pool.query<RowDataPacket[]>(SALE_QUERIES.GET_SALE_BY_ID, [id]);
+  if (!rows.length) return null;
+  const [items] = await pool.query<RowDataPacket[]>(SALE_QUERIES.GET_SALE_ITEMS, [id]);
+  return { ...rows[0], items };
+}
 }

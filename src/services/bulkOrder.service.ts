@@ -190,5 +190,10 @@ static async createBulkOrder(orderData: any) {
       orderCount: Number(cnt[0]?.total ?? 0),
     };
   }
-  
+  static async getBillData(id: number) {
+  const [orders] = await pool.query<RowDataPacket[]>(BULK_ORDER_QUERIES.GET_BY_ID, [id]);
+  if (!orders.length) return null;
+  const [items] = await pool.query<RowDataPacket[]>(BULK_ORDER_QUERIES.GET_BILL_ITEMS, [id]);
+  return { ...orders[0], products: items };
+}
 }
