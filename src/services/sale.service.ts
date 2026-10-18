@@ -94,11 +94,11 @@ export class SaleService {
           ]
         );
 
-      if (stockUpdate.affectedRows === 0) {
-        throw new Error(
-          `Insufficient stock for product ID: ${item.product_id}`
-        );
-      }
+      // if (stockUpdate.affectedRows === 0) {
+      //   throw new Error(
+      //     `Insufficient stock for product ID: ${item.product_id}`
+      //   );
+      // }
 
       await connection.query(
         PRODUCT_QUERIES.INSERT_INVENTORY_LOG,
