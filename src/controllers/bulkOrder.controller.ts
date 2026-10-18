@@ -127,7 +127,13 @@ export class BulkOrderController {
       if (!summary.rows.length) {
         return res.status(404).json({ success: false, message: 'இந்த தேதிகளில் ஆர்டர் எதுவும் இல்லை' });
       }
-
+      // ?format=json -> send the data so the screen can show it
+      if (req.query.format === 'json') {
+        return res.json({
+          success: true,
+          data: { from, to, orderCount: summary.orderCount, rows: summary.rows },
+        });
+      }
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `attachment; filename="kitchen-kot-${from}_to_${to}.pdf"`);
 
