@@ -9,4 +9,5 @@ router.get('/status', BulkOrderController.getAllDeliveryStatus);
 router.get('/:id/kot/:type', BulkOrderController.downloadKot);
 router.get('/kot/kitchen-summary', BulkOrderController.downloadKitchenSummary);
 router.get('/:id/bill', BulkOrderController.downloadBill);
+router.get('/kot/packing-summary', BulkOrderController.getPackingSummary);   // new
 export default router;

@@ -196,4 +196,31 @@ static async createBulkOrder(orderData: any) {
   const [items] = await pool.query<RowDataPacket[]>(BULK_ORDER_QUERIES.GET_BILL_ITEMS, [id]);
   return { ...orders[0], products: items };
 }
+  static async getPackingSummary(from: string, to: string) {
+    const [rows] = await pool.query<RowDataPacket[]>(BULK_ORDER_QUERIES.PACKING_SUMMARY, [from, to]);
+    const [cnt] = await pool.query<RowDataPacket[]>(BULK_ORDER_QUERIES.KITCHEN_ORDER_COUNT, [from, to]);
+
+    // one entry per product, with all of its box sizes inside
+    const map = new Map<string, any>();
+    rows.forEach((r) => {
+      const key = `${r.productId}|${r.unit}`;
+      if (!map.has(key)) {
+        map.set(key, {
+          productId: r.productId,
+          productName: r.productName,
+          unit: r.unit,
+          totalQuantity: 0,
+          packs: [] as { packSize: number; packCount: number }[],
+        });
+      }
+      const g = map.get(key);
+      g.totalQuantity += Number(r.totalQuantity);
+      g.packs.push({ packSize: Number(r.packSize), packCount: Number(r.packCount) });
+    });
+
+    return {
+      rows: Array.from(map.values()),
+      orderCount: Number(cnt[0]?.total ?? 0),
+    };
+  }
 }

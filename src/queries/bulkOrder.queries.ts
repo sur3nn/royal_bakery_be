@@ -127,4 +127,28 @@ CREATE_ORDER: `
      WHERE bulk_order_id = ?
      ORDER BY id
   `,
+    // Packing summary: boxes per product and box size across all orders in the date range
+  PACKING_SUMMARY: `
+    SELECT t.productId,
+           MAX(t.productName)   AS productName,
+           t.unit               AS unit,
+           t.packSize           AS packSize,
+           SUM(t.packCount)     AS packCount,
+           SUM(t.quantity)      AS totalQuantity
+      FROM (
+        SELECT boi.product_id                           AS productId,
+               boi.product_name_snapshot                AS productName,
+               boi.unit                                 AS unit,
+               COALESCE(boi.pack_size, boi.quantity)    AS packSize,
+               COALESCE(boi.pack_count, 1)              AS packCount,
+               boi.quantity                             AS quantity
+          FROM bulk_order_items boi
+          JOIN bulk_orders bo          ON bo.id = boi.bulk_order_id
+          LEFT JOIN delivery_status ds ON ds.id = bo.status
+         WHERE DATE(bo.delivery_date) BETWEEN ? AND ?
+           AND (ds.name IS NULL OR LOWER(ds.name) <> 'cancelled')
+      ) t
+     GROUP BY t.productId, t.unit, t.packSize
+     ORDER BY productName, t.packSize DESC
+  `,
 };
