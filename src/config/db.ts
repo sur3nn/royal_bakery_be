@@ -9,6 +9,7 @@ const pool = mysql.createPool({
   connectionLimit: 10,
   queueLimit: 0,
   timezone: '+05:30',
+  dateStrings: true,
 });
 
 // Make MySQL's NOW() / CURRENT_TIMESTAMP use IST on every new connection
